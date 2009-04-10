@@ -1,51 +1,37 @@
 require 'test/unit'
-require 'app_config'
+require '../lib/app_config'
 
 class AppConfigTest < Test::Unit::TestCase
   
   def test_missing_files
-    config = ApplicationConfig.load_files('not_here1', 'not_here2')
+    config = ApplicationConfig.init('not_here1', nil)
     assert_equal OpenStruct.new, config
   end
   
   def test_empty_files
-    config = ApplicationConfig.load_files('test/empty1.yml', 'test/empty2.yml')
+    config = ApplicationConfig.init('empty1.yml', 'development')
     assert_equal OpenStruct.new, config
   end
   
   def test_common
-    config = ApplicationConfig.load_files('test/app_config.yml')
+    config = ApplicationConfig.init('app_config.yml', 'development')
     assert_equal 1, config.size
-    assert_equal 'google.com', config.server
+    assert_equal 'development.com', config.server
   end
   
-  def test_environment_override
-    config = ApplicationConfig.load_files('test/app_config.yml', 'test/development.yml')
-    assert_equal 2, config.size
-    assert_equal 'google.com', config.server
+  def test_environment
+    config = ApplicationConfig.init('app_config.yml', 'production')
+    assert_equal 'production.com', config.server
   end
   
   def test_nested
-    config = ApplicationConfig.load_files('test/development.yml')
+    config = ApplicationConfig.init('app_config.yml', 'development')
     assert_equal 3, config.section.size
   end
   
   def test_array
-    config = ApplicationConfig.load_files('test/development.yml')
+    config = ApplicationConfig.init('app_config.yml', 'development')
     assert_equal 'yahoo.com', config.section.servers[0].name
     assert_equal 'amazon.com', config.section.servers[1].name
   end
-  
-  def test_erb
-    config = ApplicationConfig.load_files('test/development.yml')
-    assert_equal 6, config.computed
-  end
-  
-  def test_recursive_merge
-    config = ApplicationConfig.load_files('test/app_config.yml', 'test/development.yml')
-    assert_equal 'support@domain.com', config.emails.support
-    assert_equal 'webmaster@domain.com', config.emails.webmaster
-    assert_equal 'feedback@domain.com', config.emails.feedback
-  end
-  
 end

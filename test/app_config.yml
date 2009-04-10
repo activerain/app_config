@@ -1,5 +1,13 @@
-size: 1
-server: google.com
-emails:
-  support: support@domain.com
-  webmaster: web@domain.com
+development: &common
+  size: 1
+  server: development.com
+  emails:
+    support: support@domain.com
+    webmaster: web@domain.com
+  section:
+    size: 3
+    servers: [ {name: yahoo.com}, {name: amazon.com} ]
+  
+production:
+  <<: *common
+  server: production.com

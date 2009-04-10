@@ -1,24 +1,16 @@
 require 'ostruct'
 require 'yaml'
-require 'erb'
 
 # == Summary
 # This is API documentation, NOT documentation on how to use this plugin.  For that, see the README.
 module ApplicationConfig
   
-  # Create a config object (OpenStruct) from a yaml file.  If a second yaml file is given, then the sections of that file will overwrite the sections
-  # if the first file if they exist in the first file.
-  def self.load_files(conf_path_1, conf_path_2 = nil)
-  
-    conf1 = YAML.load(ERB.new(IO.read(conf_path_1)).result) if conf_path_1 and File.exists?(conf_path_1)
-    conf1 = {} if !conf1 or conf1.empty?
-    
-    conf2 = YAML.load(ERB.new(IO.read(conf_path_2)).result) if conf_path_2 and File.exists?(conf_path_2)
-    conf2 = {} if !conf2 or conf2.empty?
-    
-    conf = recursive_merge(conf1, conf2)
-    (!conf or conf.empty?) ? OpenStruct.new : convert(conf)
-    
+  # Create a config object (OpenStruct) from a yaml file.
+  def self.init(file, environment)
+    yaml = YAML.load_file(file) if File.exists?(file)
+    conf = yaml[environment] if environment and yaml.is_a?(Hash) and yaml[environment]
+    conf = {} if !conf or conf.empty?
+    (!conf or conf.empty?) ? OpenStruct.new : convert(conf)    
   end
   
   # Recursively converts Hashes to OpenStructs (including Hashes inside Arrays)
@@ -37,10 +29,4 @@ module ApplicationConfig
     end
     s
   end
-  
-  # Recursively merges hashes.  h2 will overwrite h1.
-  def self.recursive_merge(h1, h2) #:nodoc:
-    h1.merge(h2){ |k, v1, v2| v2.kind_of?(Hash) ? recursive_merge(v1, v2) : v2 }
-  end
-
 end
