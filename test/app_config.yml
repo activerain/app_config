@@ -12,6 +12,6 @@ defaults:
 development:
   size: 1
 
-  
+
 production:
   server: production.com

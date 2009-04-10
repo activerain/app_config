@@ -34,7 +34,7 @@ module ApplicationConfig
   
   # Recursively merges hashes.  h2 will overwrite h1.
   def self.recursive_merge(h1, h2) #:nodoc:
-    return h1 if h1.nil? and h2.nil?
+    return h1 if h1.nil? or h2.nil?
     h1.merge(h2){ |k, v1, v2| v2.kind_of?(Hash) ? recursive_merge(v1, v2) : v2 }
   end
 end

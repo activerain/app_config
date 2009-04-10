@@ -19,6 +19,12 @@ class AppConfigTest < Test::Unit::TestCase
     assert_equal 'development.com', config.server    
   end
   
+  def test_missing_environment
+    config = ApplicationConfig.init('app_config.yml', 'nonexistant')
+    assert_equal 30, config.size
+    assert_equal 'development.com', config.server    
+  end
+  
   def test_common
     config = ApplicationConfig.init('app_config.yml', 'development')
     assert_equal 1, config.size
