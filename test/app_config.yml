@@ -1,5 +1,5 @@
-development: &common
-  size: 1
+defaults:
+  size: 30
   server: development.com
   emails:
     support: support@domain.com
@@ -7,7 +7,11 @@ development: &common
   section:
     size: 3
     servers: [ {name: yahoo.com}, {name: amazon.com} ]
+
+  
+development:
+  size: 1
+
   
 production:
-  <<: *common
   server: production.com

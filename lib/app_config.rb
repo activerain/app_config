@@ -8,7 +8,9 @@ module ApplicationConfig
   # Create a config object (OpenStruct) from a yaml file.
   def self.init(file, environment)
     yaml = YAML.load_file(file) if File.exists?(file)
-    conf = yaml[environment] if environment and yaml.is_a?(Hash) and yaml[environment]
+    defaults = yaml['defaults'] if environment and yaml.is_a?(Hash) and yaml['defaults']
+    overrides = yaml[environment] if environment and yaml.is_a?(Hash) and yaml[environment]
+    conf = recursive_merge(defaults, overrides)
     conf = {} if !conf or conf.empty?
     (!conf or conf.empty?) ? OpenStruct.new : convert(conf)    
   end
@@ -28,5 +30,11 @@ module ApplicationConfig
       end
     end
     s
+  end
+  
+  # Recursively merges hashes.  h2 will overwrite h1.
+  def self.recursive_merge(h1, h2) #:nodoc:
+    return h1 if h1.nil? and h2.nil?
+    h1.merge(h2){ |k, v1, v2| v2.kind_of?(Hash) ? recursive_merge(v1, v2) : v2 }
   end
 end

@@ -13,6 +13,12 @@ class AppConfigTest < Test::Unit::TestCase
     assert_equal OpenStruct.new, config
   end
   
+  def test_defaults
+    config = ApplicationConfig.init('app_config.yml', 'development')
+    assert_equal 1, config.size
+    assert_equal 'development.com', config.server    
+  end
+  
   def test_common
     config = ApplicationConfig.init('app_config.yml', 'development')
     assert_equal 1, config.size
