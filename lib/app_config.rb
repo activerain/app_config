@@ -1,5 +1,6 @@
 require 'ostruct'
 require 'yaml'
+require 'erb'
 
 # == Summary
 # This is API documentation, NOT documentation on how to use this plugin.  For that, see the README.
@@ -7,7 +8,7 @@ module ApplicationConfig
   
   # Create a config object (OpenStruct) from a yaml file.
   def self.init(file, environment)
-    yaml = YAML.load_file(file) if File.exists?(file)
+    yaml = YAML.load(ERB.new(IO.read(file)).result) if File.exists?(file)
     defaults = yaml['defaults'] if environment and yaml.is_a?(Hash) and yaml['defaults']
     overrides = yaml[environment] if environment and yaml.is_a?(Hash) and yaml[environment]
     conf = recursive_merge(defaults, overrides)

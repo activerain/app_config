@@ -46,4 +46,9 @@ class AppConfigTest < Test::Unit::TestCase
     assert_equal 'yahoo.com', config.section.servers[0].name
     assert_equal 'amazon.com', config.section.servers[1].name
   end
+  
+  def test_erb
+     config = ApplicationConfig.init('app_config.yml', 'development')
+     assert_equal 6, config.computed
+   end
 end
